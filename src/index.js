@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const { exec } = require("child_process");
-import dotenv from "dotenv";
+const dotenv = require("dotenv");
 
 dotenv.config();
 const app = express();
