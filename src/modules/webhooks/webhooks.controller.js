@@ -14,10 +14,12 @@ const webhookWorkflowController = (req, res) => {
 
   const response = manageGithubWorkflow(properties);
   if (!response.success) {
-    res.sendStatus(400);
+    return res.status(400).json({
+      message: response.message,
+    });
   }
 
-  res.json({
+  return res.status(200).json({
     message: "Webhook received",
     requestBody: req.body,
     requestHeaders: req.headers,
