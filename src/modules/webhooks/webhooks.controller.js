@@ -16,7 +16,7 @@ const webhookWorkflowController = async (req, res) => {
 
   console.log(serviceResponse);
   if (!serviceResponse.success) {
-    return res.status(400).json({
+    return res.status(204).json({
       message: serviceResponse.message,
     });
   }
