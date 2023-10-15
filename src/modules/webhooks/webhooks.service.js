@@ -9,42 +9,29 @@ const manageGithubWorkflow = async (payload) => {
     success: false,
   };
 
-  switch (payload.status) {
+  switch (payload.action) {
     case "completed":
-      switch (payload.action) {
-        case "completed":
-          response = deployProject();
-          break;
-        case "requested":
-          response = { message: "Workflow requested", success: true };
-          console.log("Workflow requested");
-          break;
-        case "in_progress":
-          response = { message: "Workflow in progress", success: true };
-          console.log("Workflow in progress");
+      switch (payload.conclusion) {
+        case "success":
+          await deployProject(payload)
+            .then((res) => {
+              response.message = res.message;
+              response.success = res.success;
+            })
+            .catch((err) => {
+              response.message = err.message;
+              response.success = err.success;
+            });
           break;
         default:
-          response = {
-            message: "Workflow action not recognized",
-            success: false,
-          };
-          console.log("Workflow action not recognized");
-          console.log(payload.action);
+          response.message = "Conclusion not supported yet";
+          response.success = true;
           break;
       }
       break;
-    case "queued":
-      response = { message: "Workflow queued", success: true };
-      console.log("Workflow queued");
-      break;
-    case "in_progress":
-      response = { message: "Workflow in progress", success: true };
-      console.log("Workflow in progress");
-      break;
     default:
-      response = { message: "Workflow status not recognized", success: false };
-      console.log("Workflow status not recognized");
-      console.log(payload.status);
+      response.message = "Action not supported yet";
+      response.success = true;
       break;
   }
 
@@ -52,21 +39,36 @@ const manageGithubWorkflow = async (payload) => {
 };
 
 const deployProject = async (payload) => {
-  const pathToExec = process.env.PATH_FILE_EXEC;
+  const pathToExec = getPathFileExec(payload.repository.name);
+  const response = {
+    message: "",
+    success: false,
+  };
 
-  exec(pathToExec, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error syncing S3: ${error}`);
-      return {
-        message: `Error syncing S3: ${error}`,
-        success: false,
-      };
-    }
-    return {
-      message: `S3 synced successfully`,
-      success: true,
-    };
+  return new Promise((resolve, reject) => {
+    exec(pathToExec, (error, stdout, stderr) => {
+      if (error || stderr) {
+        response.message = `Error executing ${pathToExec}`;
+        response.success = false;
+        reject(response);
+      } else {
+        response.message = `Success executing ${pathToExec}`;
+        response.success = true;
+        resolve(response);
+      }
+    });
   });
+};
+
+const getPathFileExec = (projectName) => {
+  switch (projectName) {
+    case "metadata-scraper":
+      return `${process.env.PATH_FILE_EXEC}/metadata-scraper.sh`;
+      break;
+
+    default:
+      break;
+  }
 };
 
 module.exports = {

@@ -1,8 +1,7 @@
 const { manageGithubWorkflow } = require("./webhooks.service");
 
-const webhookWorkflowController = (req, res) => {
+const webhookWorkflowController = async (req, res) => {
   const body = req.body;
-  console.log(body);
   const properties = {
     repository: {
       id: body?.repository?.id,
@@ -10,21 +9,20 @@ const webhookWorkflowController = (req, res) => {
     },
     action: body?.action,
     status: body?.workflow_run?.status,
+    conclusion: body?.workflow_run?.conclusion,
   };
 
-  const response = manageGithubWorkflow(properties);
-  if (!response.success) {
+  const serviceResponse = await manageGithubWorkflow(properties);
+
+  console.log(serviceResponse);
+  if (!serviceResponse.success) {
     return res.status(400).json({
-      message: response.message,
+      message: serviceResponse.message,
     });
   }
 
   return res.status(200).json({
-    message: "Webhook received",
-    requestBody: req.body,
-    requestHeaders: req.headers,
-    requestParams: req.params,
-    requestQuery: req.query,
+    message: "Webhook received & executed successfully",
   });
 };
 
