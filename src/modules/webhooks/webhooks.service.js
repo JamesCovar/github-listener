@@ -64,7 +64,8 @@ const getPathFileExec = (projectName) => {
   switch (projectName) {
     case "metadata-scraper":
       return `${process.env.PATH_FILE_EXEC}/metadata-scraper.sh`;
-      break;
+    case "gridly-api":
+      return `${process.env.PATH_FILE_EXEC}/gridly-api.sh`;
 
     default:
       break;
