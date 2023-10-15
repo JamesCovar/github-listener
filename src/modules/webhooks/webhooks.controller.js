@@ -8,8 +8,8 @@ const webhookWorkflowController = async (req, res) => {
       name: body?.repository?.name,
     },
     action: body?.action,
-    status: body?.workflow_run?.status,
-    conclusion: body?.workflow_run?.conclusion,
+    status: body?.workflow_job?.status,
+    conclusion: body?.workflow_job?.conclusion,
   };
 
   const serviceResponse = await manageGithubWorkflow(properties);
