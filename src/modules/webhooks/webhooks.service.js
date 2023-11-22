@@ -66,6 +66,8 @@ const getPathFileExec = (projectName) => {
       return `${process.env.PATH_FILE_EXEC}/metadata-scraper.sh`;
     case "gridly-api":
       return `${process.env.PATH_FILE_EXEC}/gridly-api.sh`;
+    case "openai-custom":
+      return `${process.env.PATH_FILE_EXEC}/openai-custom.sh`;
 
     default:
       break;
