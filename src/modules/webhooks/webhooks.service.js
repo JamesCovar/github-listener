@@ -70,6 +70,7 @@ const getPathFileExec = (projectName) => {
       return `${process.env.PATH_FILE_EXEC}/openai-custom.sh`;
 
     default:
+      console.log("Project name not supported yet for ", projectName);
       break;
   }
 };
